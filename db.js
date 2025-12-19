@@ -1,10 +1,18 @@
 const Database = require("better-sqlite3");
 const path = require("path");
+const fs = require("fs");
+
+const dbDir = path.join(__dirname, "database");
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
 
-const dbPath = path.join(__dirname, "database", "inventory.db");
+const dbPath = path.join(dbDir, "inventory.db");
+
 
 const db = new Database(dbPath);
+
 
 db.pragma("foreign_keys = ON");
 
@@ -46,7 +54,6 @@ db.prepare(`
   )
 `).run();
 
-
 console.log("SQLite database connected and tables ready");
 
 
@@ -59,6 +66,5 @@ if (materialCount.count === 0) {
   ["Cement", "Steel", "Sand"].forEach((name) => insert.run(name));
   console.log("Materials seeded");
 }
-
 
 module.exports = db;
